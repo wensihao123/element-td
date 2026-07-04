@@ -44,7 +44,8 @@ updated: 2026-07-05
 > 「下一步」写「功能完成 → Producer 归档 + 记 Shipped」。归档动作由 Producer 做。
 
 ## 下一步
-**功能完成 → Producer 归档 + 记 Shipped**:开 `/role-producer 03-enemies-waves`,把本目录挪进 `harness/archive/`、BACKLOG 记 Shipped、遗留 flags 按去向挂账(should-fix 挂 06)。另:03 变更集尚未 commit(含 `godot-ai-LICENSE.txt`,人裁定随仓库提交),commit 动作归人。
+(无 — 已于 2026-07-05 由 Producer 归档并记入 BACKLOG Shipped;后续动向看 `harness/BACKLOG.md`。)
+(全部产物已随 commit e240391 入库,commit 动作经人授权由 Producer 代执行;遗留 flags 已分流——wave_spawner 首条目 null 防御挂 06,清波判定/`wave_spawn_finished` 语义归 06,innate 教学持续性手感挂 05/06,敌人量表与毒腐蚀数据点校准挂 07,3 条 nits 不单开工作项随手可校,2026-07-05。)
 
 ## 决策记录(账本·按需读)
 - 2026-07-04 设计/勘探/美术/接线四个可选阶段裁定不走(来源:PLAN §4,Planner)。
