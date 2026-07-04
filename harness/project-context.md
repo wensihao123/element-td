@@ -14,7 +14,7 @@ updated: 2026-07-05
 - v1 的完成定义(给 Producer 用):**MVP 可玩原型**——4 基础塔 + 6 反应 + Gauge 制、1 张交叉口地图、10 波敌人(含 1 种自带火附着怪)、单货币金币、状态可视化(图标 + gauge 环 + 反应飘字/占位特效)。验证目标:**触发反应的瞬间爽不爽、看不看得懂**。目标周期 2–3 周。
 
 ## 1. 引擎与技术栈
-- 引擎 + 版本:Godot **4.6.3 stable**(本机 `godot` 命令已在 PATH)
+- 引擎 + 版本:Godot **4.7-stable**(2026-07-05 自 4.6.3 升级,编辑器与 PATH 里的 `godot` CLI 已统一;升级冒烟全绿——`--import` 零报错、全量测试 14 用例 0 失败、probe 探针复测通过)。godot-ai MCP server 已连通,各 role 可经 MCP 直操编辑器(仍属 dev 工具、游戏代码禁依赖)。注意:升级前已开启的终端/进程仍持旧 PATH,重启后生效
 - 脚本语言:GDScript,**全程静态类型标注**(`: float`、`-> void`),Resource 类必须 `class_name`
 - 目标平台:PC (Windows) 优先,其余待定
 - 美术风格基线:**待定** — 由 Art Spec 建 STYLE-BIBLE.md 时确立;MVP 阶段允许占位图形
@@ -78,7 +78,7 @@ timeout 120 godot --headless --display-driver headless --audio-driver Dummy --qu
 ## 6. 当前已知的坑 / 临时约束
 - 美术风格基线未定,UI/特效一律先用占位,不要自行发明风格
 - 新增带 `class_name` 的脚本或 `.tres` 后必须先跑一次 `--import`(§5 第 0 步),否则 `-s` 模式解析不到新类(全局类缓存过期)
-- `-s` 模式下 autoload 单例**已加载**(02 实测,Godot 4.6.3:`root.get_node_or_null("Balance")` 非空;探针 `test/probe_autoload.gd` 保留,引擎升级后复测)。测试仍一律显式 `load()`/构造注入,不依赖单例(PLAN 02-D1,可测性设计选择)
+- `-s` 模式下 autoload 单例**已加载**(02 实测 Godot 4.6.3,2026-07-05 于 4.7 复测仍成立:`root.get_node_or_null("Balance")` 非空;探针 `test/probe_autoload.gd` 保留,下次引擎升级后再复测)。测试仍一律显式 `load()`/构造注入,不依赖单例(PLAN 02-D1,可测性设计选择)
 - `-s` 模式 `_initialize` 阶段 **root 尚未入树**(02 实测):组查询、`is_inside_tree()` 全部失效;SceneTree 脚本的树操作必须放首个 `process_frame` 之后(`run_tests.gd` 已改为首帧执行测试体)
 - godot-ai 插件为**本机 dev 工具**(非游戏系统):project.godot 的 `_mcp_game_helper` autoload 与 `[editor_plugins]` 配置随仓库提交,但 `addons/` 不入库(.gitignore 有意忽略,人裁定 2026-07-05)。**无插件的干净 checkout 首启/`--import` 会报一条插件脚本缺失 ERROR,属预期**(自装插件或编辑器里禁用即消);§5 的"日志无 ERROR"全绿标准据此豁免该条。游戏代码禁止依赖 `_mcp_game_helper`
 - 手写 `.tscn` 给 **Node 类型的 `@export`** 赋值时,节点头必须带 `node_paths=PackedStringArray("字段名")` 标记,否则 NodePath 不解析、字段**静默为 null**(03 实测,dev_playground 踩坑)

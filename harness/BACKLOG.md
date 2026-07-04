@@ -47,5 +47,8 @@ updated: 2026-07-05
   Why: MVP 数值全是占位、全住 global_config,07-balance-sim 才是数值工作的正主;现在建框架属文档过载,与 arch-guard 同理。数值失衡或 07 开工时再引入。
 - 2026-07-04 — 02-reaction-core 归档;REVIEW 3 条 should-fix 分流 — Verdict: ① `.tres.remap` 导出地雷 → Later/v2 导出闸门;② PropagateEffect handle_sink 一行加固 → 纳入 03 PLAN(已落地销案);③ take_damage 禁同步 free → 契约条款回填 project-context §3 并挂 03 开工必读(已消费)。
   Why: 三条均不影响当前 headless 全绿,不值得为技术债单开 feature;按"就近落地"分流——①只在导出时触雷而 v1 不导出,②方案现成且 03 本就要碰效果测试,③本质是 03 实现约束而非独立工作项。
+- 2026-07-05 — 引擎升级 Godot 4.6.3→4.7 + godot-ai MCP 配置就位(人告知)— Verdict: ① 核实:编辑器 4.7-stable、MCP 连通、编辑器零报错、`project.godot` features 已被 4.7 自动升为 "4.7"(未提交);但 PATH 的 CLI 仍 4.6.3,全量测试(14 用例 0 失败)绿在 4.6.3 非 4.7。② 在 04 开工前挂**环境闸门**:人工统一 CLI 到 4.7 → 复跑全量 + probe_autoload(§6 复测挂账被此升级触发)→ 授权提交 features 升级。③ MCP 定位不变:dev 工具,各 role 可用,游戏代码禁依赖(沿 03 归档人裁定)。
+  Why: 混引擎开发(编辑 4.7 / 验证 4.6.3)会让 04 的失败误归因,统一成本仅几分钟;probe 复测本就是 §6 写死的升级触发项;闸门是环境动作非功能,不单开 feature,挂在 04 条目下随其销案。
+  (2026-07-05 闸门全销:①人工换 PATH;②4.7 复跑全绿——`--import` 零报错、14 用例 0 失败、probe 通过;③经人授权由 Producer 代执行提交。04 开工放行。)
 - 2026-07-05 — 03-enemies-waves 归档;复审遗留 1 条 should-fix + 3 条 nits 分流 — Verdict: ① `wave_spawner.start_wave` 首条目 null 无防御 → 挂 06(手写 10 波 `.tres` 时留意或顺手修);② innate 教学持续性手感 → 挂 05/06 复核;③ 敌人量表与毒腐蚀数据点校准 → 挂 07;④ 3 条 nits(.gitignore 末行换行、innate cfg 缺失静默白板、02 归档日期微差)不单开工作项,随手可校。
   Why: 均不影响 headless 全绿与 03 验收面(playtest gate 已过);沿 02 归档先例按"就近落地"分流,04 为既有契约的纯消费方,无新增账。变更集 commit 经人授权由 Producer 代执行(feat e240391)。
