@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="ReactionDef" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/defs/reaction_def.gd" id="1_def"]
+[ext_resource type="Resource" path="res://data/elements/fire.tres" id="2_fire"]
+[ext_resource type="Resource" path="res://data/elements/poison.tres" id="3_poison"]
+[ext_resource type="Script" path="res://scripts/effects/dot_effect.gd" id="4_dot"]
+[ext_resource type="Script" path="res://scripts/effects/propagate_effect.gd" id="5_prop"]
+[ext_resource type="Script" path="res://scripts/effects/reaction_effect.gd" id="6_fx"]
+
+[sub_resource type="Resource" id="fx_dot_main"]
+script = ExtResource("4_dot")
+dps = 8.0
+duration = 4.0
+tick_interval = 0.5
+
+[sub_resource type="Resource" id="fx_dot_spread"]
+script = ExtResource("4_dot")
+dps = 8.0
+duration = 4.0
+tick_interval = 0.5
+
+[sub_resource type="Resource" id="fx_prop"]
+script = ExtResource("5_prop")
+inner = SubResource("fx_dot_spread")
+radius = 96.0
+
+[resource]
+script = ExtResource("1_def")
+id = &"combustion"
+display_name = "燃爆"
+element_a = ExtResource("2_fire")
+element_b = ExtResource("3_poison")
+gauge_cost_override = -1.0
+effects = Array[ExtResource("6_fx")]([SubResource("fx_dot_main"), SubResource("fx_prop")])

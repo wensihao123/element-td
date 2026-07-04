@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ReactionDef" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/defs/reaction_def.gd" id="1_def"]
+[ext_resource type="Resource" path="res://data/elements/ice.tres" id="2_ice"]
+[ext_resource type="Resource" path="res://data/elements/poison.tres" id="3_poison"]
+[ext_resource type="Script" path="res://scripts/effects/stat_modifier_effect.gd" id="4_stat"]
+[ext_resource type="Script" path="res://scripts/effects/reaction_effect.gd" id="5_fx"]
+
+[sub_resource type="Resource" id="fx_vulnerable"]
+script = ExtResource("4_stat")
+stat = &"damage_taken"
+add_flat = 0.0
+add_percent = 0.4
+duration = 5.0
+
+[resource]
+script = ExtResource("1_def")
+id = &"brittle"
+display_name = "脆化"
+element_a = ExtResource("2_ice")
+element_b = ExtResource("3_poison")
+gauge_cost_override = -1.0
+effects = Array[ExtResource("5_fx")]([SubResource("fx_vulnerable")])

@@ -1,0 +1,89 @@
+extends TestCase
+
+## 数据完整性测试(PLAN Phase 3):载入全部 11 个 .tres,断言 6 条约束。
+## 期望值 2/1/3/0/0.5 为 MVP 基准(项目说明 §2.2),权威来源是 global_config.tres 本身。
+
+const CONFIG_PATH: String = "res://data/balance/global_config.tres"
+const ELEMENT_PATHS: Array[String] = [
+	"res://data/elements/fire.tres",
+	"res://data/elements/ice.tres",
+	"res://data/elements/lightning.tres",
+	"res://data/elements/poison.tres",
+]
+const REACTION_PATHS: Array[String] = [
+	"res://data/reactions/steam_burst.tres",
+	"res://data/reactions/overload.tres",
+	"res://data/reactions/combustion.tres",
+	"res://data/reactions/superconduct.tres",
+	"res://data/reactions/brittle.tres",
+	"res://data/reactions/electrolysis.tres",
+]
+
+
+func test_global_config_matches_mvp_baseline() -> void:
+	var cfg: GaugeConfig = load(CONFIG_PATH) as GaugeConfig
+	assert_true(cfg != null, "global_config.tres 应能加载为 GaugeConfig")
+	if cfg == null:
+		return
+	assert_eq(cfg.default_attach, 2.0, "default_attach 应为 MVP 基准 2U")
+	assert_eq(cfg.default_cost, 1.0, "default_cost 应为 MVP 基准 1U")
+	assert_eq(cfg.max_gauge, 3.0, "max_gauge 应为 MVP 基准 3U")
+	assert_eq(cfg.decay_per_sec, 0.0, "decay_per_sec 应为 MVP 基准 0")
+	assert_eq(cfg.reaction_icd, 0.5, "reaction_icd 应为 MVP 基准 0.5s")
+
+
+func test_elements_unique_ids_and_base_status() -> void:
+	var ids: Array[StringName] = []
+	for path: String in ELEMENT_PATHS:
+		var element: ElementDef = load(path) as ElementDef
+		assert_true(element != null, "%s 应能加载为 ElementDef" % path)
+		if element == null:
+			continue
+		assert_true(element.id != &"", "%s 的 id 不得为空" % path)
+		assert_true(not ids.has(element.id), "元素 id 重复:%s" % element.id)
+		ids.append(element.id)
+		assert_true(not element.base_status.is_empty(), "%s 的 base_status 不得为空" % path)
+	assert_eq(ids.size(), 4, "应恰好 4 个元素")
+
+
+func test_reactions_cover_all_pairs() -> void:
+	var element_ids: Array[String] = []
+	for path: String in ELEMENT_PATHS:
+		var element: ElementDef = load(path) as ElementDef
+		if element != null:
+			element_ids.append(String(element.id))
+	element_ids.sort()
+	var expected_keys: Array[String] = []
+	for i: int in range(element_ids.size()):
+		for j: int in range(i + 1, element_ids.size()):
+			expected_keys.append("%s+%s" % [element_ids[i], element_ids[j]])
+
+	var seen_keys: Array[String] = []
+	for path: String in REACTION_PATHS:
+		var reaction: ReactionDef = load(path) as ReactionDef
+		assert_true(reaction != null, "%s 应能加载为 ReactionDef" % path)
+		if reaction == null:
+			continue
+		assert_true(reaction.element_a != null and reaction.element_b != null,
+				"%s 的元素引用不得为空" % path)
+		if reaction.element_a == null or reaction.element_b == null:
+			continue
+		assert_true(reaction.element_a.id != reaction.element_b.id, "%s 不得自反(a != b)" % path)
+		var pair: Array[String] = [String(reaction.element_a.id), String(reaction.element_b.id)]
+		pair.sort()
+		var key: String = "%s+%s" % [pair[0], pair[1]]
+		assert_true(not seen_keys.has(key), "反应无序对重复:%s" % key)
+		seen_keys.append(key)
+		assert_true(not reaction.effects.is_empty(), "%s 的 effects 不得为空" % path)
+		for effect: ReactionEffect in reaction.effects:
+			assert_true(effect != null, "%s 存在空效果槽" % path)
+			var propagate: PropagateEffect = effect as PropagateEffect
+			if propagate != null:
+				assert_true(propagate.inner != null, "%s 的 PropagateEffect.inner 不得为空" % path)
+	seen_keys.sort()
+	assert_eq(str(seen_keys), str(expected_keys), "6 个反应应恰好覆盖 4 元素的全部无序对")
+
+
+func test_balance_autoload_registered() -> void:
+	assert_true(ProjectSettings.has_setting("autoload/Balance"),
+			"project.godot 应注册 Balance autoload")

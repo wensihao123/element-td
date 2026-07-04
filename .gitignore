@@ -1,0 +1,3 @@
+# Godot 4 缓存/导入产物
+.godot/
+*.tmp

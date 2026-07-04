@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ElementDef" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/defs/element_def.gd" id="1_def"]
+[ext_resource type="Script" path="res://scripts/effects/stat_modifier_effect.gd" id="2_stat"]
+[ext_resource type="Script" path="res://scripts/effects/reaction_effect.gd" id="3_fx"]
+
+[sub_resource type="Resource" id="fx_corrode"]
+script = ExtResource("2_stat")
+stat = &"armor"
+add_flat = -2.0
+add_percent = 0.0
+duration = -1.0
+
+[resource]
+script = ExtResource("1_def")
+id = &"poison"
+display_name = "毒"
+color = Color(0.486275, 0.709804, 0.094118, 1)
+base_status = Array[ExtResource("3_fx")]([SubResource("fx_corrode")])
