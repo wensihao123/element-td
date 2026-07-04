@@ -43,7 +43,7 @@ updated: 2026-07-04
 > 「下一步」写「功能完成 → Producer 归档 + 记 Shipped」。归档动作由 Producer 做。
 
 ## 下一步
-功能完成 → Producer 归档 + 记 Shipped:`/role-producer 01-data-layer`(切换前先 /clear)。
+(无 — 已于 2026-07-04 由 Producer 归档并记入 BACKLOG Shipped;后续动向看 `harness/BACKLOG.md`。)
 (全部产物已随 commit 1c7ca73 入库,2026-07-04。)
 
 ## 决策记录(账本·按需读)
