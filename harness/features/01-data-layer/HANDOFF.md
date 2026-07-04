@@ -44,7 +44,7 @@ updated: 2026-07-04
 
 ## 下一步
 功能完成 → Producer 归档 + 记 Shipped:`/role-producer 01-data-layer`(切换前先 /clear)。
-另:全部文件尚未 commit(Implementer 未获授权,Reviewer 亦未动),归档前请人或 Producer 先提交。
+(全部产物已随 commit 1c7ca73 入库,2026-07-04。)
 
 ## 决策记录(账本·按需读)
 - 2026-07-04 设计/勘探/美术/接线四个可选阶段裁定不走(来源:PLAN.md §4,Planner)。
