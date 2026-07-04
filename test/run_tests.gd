@@ -2,11 +2,17 @@ extends SceneTree
 
 ## headless 测试跑道:扫描 res://test/cases/*.gd,反射执行 test_ 前缀方法,
 ## 逐用例打印 PASSED/FAILED,末尾汇总并显式 quit(0/1)。
+## 测试体在首个 process 帧执行,不在 _initialize:实测(02 探针)_initialize
+## 阶段 root 尚未入树,组查询/is_inside_tree 全部失效。
 
 const CASES_DIR: String = "res://test/cases"
 
 
 func _initialize() -> void:
+	process_frame.connect(_run_all, CONNECT_ONE_SHOT)
+
+
+func _run_all() -> void:
 	var total_cases: int = 0
 	var failed_cases: int = 0
 	var dir: DirAccess = DirAccess.open(CASES_DIR)
@@ -35,8 +41,12 @@ func _initialize() -> void:
 		for method: Dictionary in case.get_method_list():
 			var method_name: String = method["name"]
 			if method_name.begins_with("test_"):
+				var count_before: int = case.assert_count
 				case.call(method_name)
 				method_count += 1
+				if case.assert_count == count_before:
+					case.failures.append(
+							"%s:零断言,疑似方法内运行时崩溃" % method_name)
 		if case.failures.is_empty():
 			print("PASSED  %s(%d 个测试方法)" % [path.get_file(), method_count])
 		else:

@@ -16,6 +16,8 @@ config/features=PackedStringArray("4.6")
 [autoload]
 
 Balance="*res://scripts/systems/balance.gd"
+EventBus="*res://scripts/systems/event_bus.gd"
+ReactionSystem="*res://scripts/systems/reaction_system.gd"
 
 [debug]
 

@@ -45,6 +45,9 @@ element-td/               [Godot 项目根,= res://]
 - 数值解析模式:全局默认(GaugeConfig)+ 局部覆盖(override 字段默认 `-1.0` 表示用全局),经 `get_attach()` / `get_cost()` 查询
 - 反应归属:反应伤害记给触发方塔(source_tower)
 - MVP 基准数值(全走 global_config):附着 2U / 消耗 1U / 上限 3U / 衰减 0 / ICD 0.5s
+- 组件发现约定(02-D7):敌人实体根(Node2D)下挂**具名直接子节点** `StatusComponent` / `ModifierStack` / `ActiveEffects`;敌人实体根一律入 `&"enemies"` 组(02-D6,空间查询 = 组扫描 + 距离过滤)
+- 效果享元(02-D3):`ReactionEffect` 共享实例自身零字段写入;逐宿主可变状态住宿主 `ActiveEffects` 的 state 字典(on_start 返回、on_tick/on_end 读写);计时唯一权威 = ActiveEffects
+- 鸭子/键位契约(02-D4/D10,03/04 必须消费):`take_damage(amount: float, source: Node)`、`apply_knockback(distance: float, direction: Vector2)`;ModifierStack 保留键 `&"speed"` / `&"armor"` / `&"damage_taken"` / `&"stunned"`,移动/攻击逻辑须查 `resolve(&"stunned", 0.0) > 0.0`
 
 ## 4. 禁止事项(hard NOs)
 - 代码中出现游戏数值字面量 = bug;所有数字住 `res://data/` 的 `.tres`
@@ -72,4 +75,5 @@ timeout 120 godot --headless --display-driver headless --audio-driver Dummy --qu
 ## 6. 当前已知的坑 / 临时约束
 - 美术风格基线未定,UI/特效一律先用占位,不要自行发明风格
 - 新增带 `class_name` 的脚本或 `.tres` 后必须先跑一次 `--import`(§5 第 0 步),否则 `-s` 模式解析不到新类(全局类缓存过期)
-- `-s` 模式下 autoload 单例是否加载未验证:headless 测试一律显式 `load()`/构造资源,不要依赖 `Balance` 单例(02 落地 ReactionSystem 时一并验证)
+- `-s` 模式下 autoload 单例**已加载**(02 实测,Godot 4.6.3:`root.get_node_or_null("Balance")` 非空;探针 `test/probe_autoload.gd` 保留,引擎升级后复测)。测试仍一律显式 `load()`/构造注入,不依赖单例(PLAN 02-D1,可测性设计选择)
+- `-s` 模式 `_initialize` 阶段 **root 尚未入树**(02 实测):组查询、`is_inside_tree()` 全部失效;SceneTree 脚本的树操作必须放首个 `process_frame` 之后(`run_tests.gd` 已改为首帧执行测试体)
