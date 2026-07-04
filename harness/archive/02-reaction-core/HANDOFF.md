@@ -43,7 +43,8 @@ updated: 2026-07-04
 > 「下一步」写「功能完成 → Producer 归档 + 记 Shipped」。归档动作由 Producer 做。
 
 ## 下一步
-**功能完成 → Producer 归档 + 记 Shipped**:`/role-producer 02-reaction-core`。审查 verdict = APPROVE WITH NITS(2026-07-04),必需三阶段(计划/实现/审查)全 `[x]`,满足功能完成判据。Producer 归档时请处置:① REVIEW.md 3 条 should-fix(导出包 `.tres.remap` 地雷 / Propagate handle_sink 一行加固 / Wiring Contract 补 take_damage 禁同步 free)——转 BACKLOG 或排给后续 feature;② 人工确认项:编辑器开项目无报错 + autoload 面板见 Balance/EventBus/ReactionSystem 三条(headless 无法替代,10 秒即验)。
+(无 — 已于 2026-07-04 由 Producer 归档并记入 BACKLOG Shipped;后续动向看 `harness/BACKLOG.md`。)
+(全部产物已随 commit 5b24051 入库;3 条 should-fix 与人工确认项均已裁毕——handle_sink 加固、take_damage 禁同步 free、人工 10 秒验证挂 03 开工必读,`.tres.remap` 导出闸门挂 Later/v2,2026-07-04。)
 
 ## 决策记录(账本·按需读)
 - 2026-07-04 设计/勘探/美术/接线四个可选阶段裁定不走(来源:PLAN §4,Planner)。

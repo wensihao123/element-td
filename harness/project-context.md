@@ -47,7 +47,7 @@ element-td/               [Godot 项目根,= res://]
 - MVP 基准数值(全走 global_config):附着 2U / 消耗 1U / 上限 3U / 衰减 0 / ICD 0.5s
 - 组件发现约定(02-D7):敌人实体根(Node2D)下挂**具名直接子节点** `StatusComponent` / `ModifierStack` / `ActiveEffects`;敌人实体根一律入 `&"enemies"` 组(02-D6,空间查询 = 组扫描 + 距离过滤)
 - 效果享元(02-D3):`ReactionEffect` 共享实例自身零字段写入;逐宿主可变状态住宿主 `ActiveEffects` 的 state 字典(on_start 返回、on_tick/on_end 读写);计时唯一权威 = ActiveEffects
-- 鸭子/键位契约(02-D4/D10,03/04 必须消费):`take_damage(amount: float, source: Node)`、`apply_knockback(distance: float, direction: Vector2)`;ModifierStack 保留键 `&"speed"` / `&"armor"` / `&"damage_taken"` / `&"stunned"`,移动/攻击逻辑须查 `resolve(&"stunned", 0.0) > 0.0`
+- 鸭子/键位契约(02-D4/D10,03/04 必须消费):`take_damage(amount: float, source: Node)`、`apply_knockback(distance: float, direction: Vector2)`;ModifierStack 保留键 `&"speed"` / `&"armor"` / `&"damage_taken"` / `&"stunned"`,移动/攻击逻辑须查 `resolve(&"stunned", 0.0) > 0.0`;`take_damage` **禁止同步 `free()` 敌人**,死亡一律 `queue_free`(AoE 组遍历与 ActiveEffects.tick 都在迭代中投伤,同步释放 = use-after-free;02 REVIEW)
 
 ## 4. 禁止事项(hard NOs)
 - 代码中出现游戏数值字面量 = bug;所有数字住 `res://data/` 的 `.tres`
