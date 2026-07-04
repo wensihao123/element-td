@@ -58,5 +58,5 @@ updated: 2026-07-04
 - 三条契约须由 03/04 落地消费:`take_damage(amount, source)` / `apply_knockback(distance, direction)` / `resolve(&"stunned", 0.0) > 0.0`——已写进 CHANGES §5 Wiring Contract 与 project-context §3。
 - 02 伤害断言未过护甲公式(HealthComponent 归 03);03 落地后补一条端到端复核。
 - (02 新增)PropagateEffect 浅拷贝 ctx ⇒ handle_sink 被邻居共享;当前无实害(base_status 无传播)。REVIEW should-fix 给出一行拆雷方案(`neighbor_ctx.erase("handle_sink")`),落地后本 flag 可销案;否则未来给 base_status 配传播效果时句柄归属需重审(CHANGES §6)。
-- (02 新增)Playtest 人工确认项:编辑器开项目无报错 + autoload 面板见 Balance/EventBus/ReactionSystem 三条(headless 已验 ProjectSettings 层)。
+- ~~(02 新增)Playtest 人工确认项:编辑器开项目无报错 + autoload 面板见 Balance/EventBus/ReactionSystem 三条(headless 已验 ProjectSettings 层)。~~ 已销案:2026-07-04 人工验证通过(编辑器无报错,Autoload 三条齐且序正确)。
 - (承 01)毒腐蚀 add_flat -2.0 待 03 敌人护甲量表复核;radius/distance/speed 等 px 数值待 06 地图 tile 尺度复核。

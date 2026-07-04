@@ -7,7 +7,6 @@ updated: 2026-07-04
 
 ## Now(已承诺,按序执行)
 1. `03-enemies-waves` — 敌人(Path2D 寻路 + Health/StatusComponent)+ 波次生成器(含自带火附着怪)
-   - **开工前人工 10 秒验证(02 收尾,headless 无法替代)**:编辑器开项目无报错 + autoload 面板见 Balance / EventBus / ReactionSystem 三条。
    - **02 归档遗留,开工必读**(全文见 `harness/archive/02-reaction-core/HANDOFF.md` 未决 flags):
      ① 必须消费三条契约(project-context §3):`take_damage(amount, source)`、`apply_knockback(distance, direction)`、移动/攻击逻辑查 `resolve(&"stunned", 0.0) > 0.0`;且 `take_damage` **禁止同步 `free()` 敌人**,死亡一律 `queue_free`(AoE 组遍历与 ActiveEffects.tick 都在迭代中投伤,同步释放 = use-after-free;02 REVIEW should-fix);
      ② 纳入 03 PLAN 一步:PropagateEffect handle_sink 一行加固 `neighbor_ctx.erase("handle_sink")`(02 REVIEW should-fix,方案现成,落地后销 archive/02 CHANGES §6 flag);
