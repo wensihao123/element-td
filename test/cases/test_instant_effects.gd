@@ -81,6 +81,23 @@ func test_propagate_excludes_main_and_overrides_direction() -> void:
 	_cleanup([main, right_neighbor, left_neighbor, far])
 
 
+func test_propagate_does_not_leak_handle_sink_to_neighbors() -> void:
+	var main: StubEnemy = _add_enemy(Vector2.ZERO)
+	var near: StubEnemy = _add_enemy(Vector2(50.0, 0.0))
+	var stun: StunEffect = StunEffect.new()
+	stun.duration = 1.0
+	var prop: PropagateEffect = PropagateEffect.new()
+	prop.inner = stun
+	prop.radius = 100.0
+	var sink: Array[int] = []
+	prop.apply(main, {"handle_sink": sink})
+	assert_true(near.stack().resolve(&"stunned", 0.0) > 0.0,
+			"邻居应照常吃到 inner 持续型效果")
+	assert_true(sink.is_empty(),
+			"邻居句柄不得混入主目标的 handle_sink(02 flag ② 加固)")
+	_cleanup([main, near])
+
+
 func test_propagate_registers_durational_inner_on_neighbor() -> void:
 	var main: StubEnemy = _add_enemy(Vector2.ZERO)
 	var near: StubEnemy = _add_enemy(Vector2(50.0, 0.0))

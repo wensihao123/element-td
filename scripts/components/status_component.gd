@@ -45,6 +45,21 @@ func apply_element(incoming: ElementDef, amount: float, source: Node,
 		push_warning("异元素命中但未注入 reaction_system,丢弃")
 
 
+## innate 附着(PLAN 03-D5):只设元素与量并发 status_started,不挂 base_status——
+## 语义 = 「元素在身、可供反应」,自带火怪不吃自身灼烧 DoT(衰减 0 会永续烧死)。
+## 仅供出生空状态时调用;异元素命中照常走 try_react,同元素命中走既有充能分支。
+func apply_innate(incoming: ElementDef, amount: float) -> void:
+	if incoming == null or cfg == null:
+		push_warning("apply_innate 需要 incoming 元素与注入的 cfg")
+		return
+	if element != null:
+		push_warning("apply_innate 仅限出生空状态时调用,忽略")
+		return
+	element = incoming
+	gauge = clampf(amount, 0.0, cfg.max_gauge)
+	status_started.emit(element)
+
+
 ## 扣元素量(反应消耗走这里,D9);扣到 ≤ 0 即过期回滚。
 func consume(amount: float) -> void:
 	gauge -= amount

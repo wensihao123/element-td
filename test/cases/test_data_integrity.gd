@@ -1,6 +1,6 @@
 extends TestCase
 
-## 数据完整性测试(PLAN Phase 3):载入全部 11 个 .tres,断言 6 条约束。
+## 数据完整性测试:载入全部 .tres,断言结构约束(02 建立;03 扩敌人/波次)。
 ## 期望值 2/1/3/0/0.5 为 MVP 基准(项目说明 §2.2),权威来源是 global_config.tres 本身。
 
 const CONFIG_PATH: String = "res://data/balance/global_config.tres"
@@ -82,6 +82,47 @@ func test_reactions_cover_all_pairs() -> void:
 				assert_true(propagate.inner != null, "%s 的 PropagateEffect.inner 不得为空" % path)
 	seen_keys.sort()
 	assert_eq(str(seen_keys), str(expected_keys), "6 个反应应恰好覆盖 4 元素的全部无序对")
+
+
+const ENEMY_PATHS: Array[String] = [
+	"res://data/enemies/runner.tres",
+	"res://data/enemies/lava_hound.tres",
+]
+const DEV_WAVE_PATH: String = "res://data/waves/dev_wave.tres"
+
+
+func test_enemy_defs_integrity() -> void:
+	var ids: Array[StringName] = []
+	for path: String in ENEMY_PATHS:
+		var def: EnemyDef = load(path) as EnemyDef
+		assert_true(def != null, "%s 应能加载为 EnemyDef" % path)
+		if def == null:
+			continue
+		assert_true(def.id != &"", "%s 的 id 不得为空" % path)
+		assert_true(not ids.has(def.id), "敌人 id 重复:%s" % def.id)
+		ids.append(def.id)
+		assert_true(def.max_hp > 0.0, "%s 的 max_hp 应 > 0" % path)
+		assert_true(def.speed > 0.0, "%s 的 speed 应 > 0" % path)
+		assert_true(def.gold_reward > 0, "%s 的 gold_reward 应 > 0" % path)
+
+
+func test_lava_hound_innate_is_fire() -> void:
+	var hound: EnemyDef = load("res://data/enemies/lava_hound.tres") as EnemyDef
+	assert_true(hound != null and hound.innate_element != null,
+			"lava_hound 应引用 innate 元素")
+	if hound != null and hound.innate_element != null:
+		assert_eq(hound.innate_element.id, &"fire", "lava_hound.innate_element 应为火")
+
+
+func test_dev_wave_integrity() -> void:
+	var wave: WaveDef = load(DEV_WAVE_PATH) as WaveDef
+	assert_true(wave != null, "dev_wave.tres 应能加载为 WaveDef")
+	if wave == null:
+		return
+	assert_true(not wave.entries.is_empty(), "dev_wave entries 不得为空")
+	for entry: SpawnEntry in wave.entries:
+		assert_true(entry != null and entry.enemy != null,
+				"dev_wave 每条目的 enemy 引用不得为空")
 
 
 func test_balance_autoload_registered() -> void:

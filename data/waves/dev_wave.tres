@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WaveDef" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/defs/wave_def.gd" id="1_def"]
+[ext_resource type="Script" path="res://scripts/defs/spawn_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/enemies/runner.tres" id="3_runner"]
+[ext_resource type="Resource" path="res://data/enemies/lava_hound.tres" id="4_hound"]
+
+[sub_resource type="Resource" id="entry_runners"]
+script = ExtResource("2_entry")
+enemy = ExtResource("3_runner")
+count = 5
+spawn_interval = 1.0
+start_delay = 0.0
+
+[sub_resource type="Resource" id="entry_hounds"]
+script = ExtResource("2_entry")
+enemy = ExtResource("4_hound")
+count = 2
+spawn_interval = 2.0
+start_delay = 3.0
+
+[resource]
+script = ExtResource("1_def")
+entries = Array[ExtResource("2_entry")]([SubResource("entry_runners"), SubResource("entry_hounds")])

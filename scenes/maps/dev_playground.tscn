@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://dnva1a58sx8f6"]
+
+[ext_resource type="Script" uid="uid://c6lta5vksski4" path="res://scenes/maps/dev_playground.gd" id="1_dev"]
+[ext_resource type="Script" uid="uid://llho8crx25v6" path="res://scripts/systems/wave_spawner.gd" id="2_spawner"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/enemy.tscn" id="3_enemy"]
+
+[sub_resource type="Curve2D" id="curve_s"]
+_data = {
+"points": PackedVector2Array(0, 0, 300, 0, 64, 160, -300, 0, 300, 0, 576, 324, -300, 0, 0, 0, 1088, 488)
+}
+point_count = 3
+
+[node name="DevPlayground" type="Node2D" unique_id=1130701723]
+script = ExtResource("1_dev")
+
+[node name="Path2D" type="Path2D" parent="." unique_id=2099400135]
+curve = SubResource("curve_s")
+
+[node name="WaveSpawner" type="Node" parent="." unique_id=1964613556 node_paths=PackedStringArray("path")]
+script = ExtResource("2_spawner")
+enemy_scene = ExtResource("3_enemy")
+path = NodePath("../Path2D")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1591925869]
+position = Vector2(576, 324)

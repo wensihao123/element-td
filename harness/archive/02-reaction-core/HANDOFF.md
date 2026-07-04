@@ -56,7 +56,8 @@ updated: 2026-07-04
 - (02 审查新增,REVIEW should-fix)Wiring Contract 需补:03 的 `take_damage` 禁止同步 `free()` 敌人(死亡走 `queue_free`)——AoE 组员遍历与 ActiveEffects.tick 都在迭代中投伤,同步释放 = use-after-free。
 - ICD 期间异元素命中裁定为「不反应、不附着、不动 gauge」(PLAN D8,设计文档未明说)——已按此实现,待 05/06 手感复核。
 - 三条契约须由 03/04 落地消费:`take_damage(amount, source)` / `apply_knockback(distance, direction)` / `resolve(&"stunned", 0.0) > 0.0`——已写进 CHANGES §5 Wiring Contract 与 project-context §3。
-- 02 伤害断言未过护甲公式(HealthComponent 归 03);03 落地后补一条端到端复核。
-- (02 新增)PropagateEffect 浅拷贝 ctx ⇒ handle_sink 被邻居共享;当前无实害(base_status 无传播)。REVIEW should-fix 给出一行拆雷方案(`neighbor_ctx.erase("handle_sink")`),落地后本 flag 可销案;否则未来给 base_status 配传播效果时句柄归属需重审(CHANGES §6)。
+- ~~02 伤害断言未过护甲公式(HealthComponent 归 03);03 落地后补一条端到端复核。~~ 已销案:2026-07-04 由 03-enemies-waves Phase 1 落地 test_enemy_e2e(真敌人过真反应,armor 0/2 两档精确伤害断言 + 毒负甲增伤 + 冰减速),headless 全绿。
+- ~~(02 新增)PropagateEffect 浅拷贝 ctx ⇒ handle_sink 被邻居共享;当前无实害(base_status 无传播)。REVIEW should-fix 给出一行拆雷方案(`neighbor_ctx.erase("handle_sink")`),落地后本 flag 可销案;否则未来给 base_status 配传播效果时句柄归属需重审(CHANGES §6)。~~ 已销案:2026-07-04 由 03-enemies-waves Phase 1 落地 `neighbor_ctx.erase("handle_sink")` + 回归测试(test_instant_effects),headless 全绿。
 - ~~(02 新增)Playtest 人工确认项:编辑器开项目无报错 + autoload 面板见 Balance/EventBus/ReactionSystem 三条(headless 已验 ProjectSettings 层)。~~ 已销案:2026-07-04 人工验证通过(编辑器无报错,Autoload 三条齐且序正确)。
 - (承 01)毒腐蚀 add_flat -2.0 待 03 敌人护甲量表复核;radius/distance/speed 等 px 数值待 06 地图 tile 尺度复核。
+  ↳ 2026-07-05 前半句已由 03 e2e 固化数据点(armor 0 怪:同额伤害 +2/次),状态转「待校准」,归 07/num-smith;px 尺度部分原样留给 06(03 HANDOFF 未决 flags 继续跟踪)。

@@ -1,6 +1,6 @@
 # Project Context (shared by all roles)
 
-updated: 2026-07-04
+updated: 2026-07-05
 
 > 所有 role 的共享内存。每个 session 先读这一份。
 > 事实来源:本文件是 [../元素反应塔防-项目说明.md](../元素反应塔防-项目说明.md) 的蒸馏;机制/架构细节冲突时以项目说明为准。
@@ -27,7 +27,7 @@ element-td/               [Godot 项目根,= res://]
   project.godot
   data/                   [全部数值,.tres 资源]
     balance/global_config.tres    # GaugeConfig 全局默认(MVP 唯一数值文件)
-    elements/  reactions/  towers/  enemies/
+    elements/  reactions/  towers/  enemies/  waves/    # waves/ = WaveDef 单波表(03)
   scripts/
     defs/          # Resource 类定义(ElementDef / TowerDef / ReactionDef / EnemyDef / GaugeConfig)
     effects/       # ReactionEffect 及其子类(可组合积木)
@@ -35,6 +35,8 @@ element-td/               [Godot 项目根,= res://]
     systems/       # ReactionSystem、EventBus、Balance(autoload)
   scenes/
     towers/  enemies/  maps/  ui/
+    # 实体根脚本随场景放(03-D10):enemies/enemy.gd+enemy.tscn(通用敌人,EnemyDef 注入);
+    # maps/dev_playground.tscn = dev 演武场(仅开发验证);系统逻辑仍归 scripts/systems/(如 wave_spawner.gd)
   test/                   [headless 测试]
   harness/                [role artifact,纳入版本控制]
 ```
@@ -48,6 +50,7 @@ element-td/               [Godot 项目根,= res://]
 - 组件发现约定(02-D7):敌人实体根(Node2D)下挂**具名直接子节点** `StatusComponent` / `ModifierStack` / `ActiveEffects`;敌人实体根一律入 `&"enemies"` 组(02-D6,空间查询 = 组扫描 + 距离过滤)
 - 效果享元(02-D3):`ReactionEffect` 共享实例自身零字段写入;逐宿主可变状态住宿主 `ActiveEffects` 的 state 字典(on_start 返回、on_tick/on_end 读写);计时唯一权威 = ActiveEffects
 - 鸭子/键位契约(02-D4/D10,03/04 必须消费):`take_damage(amount: float, source: Node)`、`apply_knockback(distance: float, direction: Vector2)`;ModifierStack 保留键 `&"speed"` / `&"armor"` / `&"damage_taken"` / `&"stunned"`,移动/攻击逻辑须查 `resolve(&"stunned", 0.0) > 0.0`;`take_damage` **禁止同步 `free()` 敌人**,死亡一律 `queue_free`(AoE 组遍历与 ActiveEffects.tick 都在迭代中投伤,同步释放 = use-after-free;02 REVIEW)
+- 03 落地契约:敌人根第四具名子组件 `HealthComponent`,护甲公式 `final = maxf(amount - armor, 0.0) * resolve(&"damage_taken", 1.0)`(armor 经 resolve,负甲增伤);击退 = 路径进度回退 clamp 0(03-D2,忽略 direction);innate 附着走 `StatusComponent.apply_innate`(只设元素/量,不挂 base_status,03-D5);EventBus 五信号 `enemy_spawned` / `enemy_died` / `enemy_reached_exit` / `wave_started` / `wave_spawn_finished`(**= 生成完毕,非清波**,清波判定归 06;03-D8);`WaveSpawner.start_wave(WaveDef)` 只播单波,波次序列归 06
 
 ## 4. 禁止事项(hard NOs)
 - 代码中出现游戏数值字面量 = bug;所有数字住 `res://data/` 的 `.tres`
@@ -77,3 +80,6 @@ timeout 120 godot --headless --display-driver headless --audio-driver Dummy --qu
 - 新增带 `class_name` 的脚本或 `.tres` 后必须先跑一次 `--import`(§5 第 0 步),否则 `-s` 模式解析不到新类(全局类缓存过期)
 - `-s` 模式下 autoload 单例**已加载**(02 实测,Godot 4.6.3:`root.get_node_or_null("Balance")` 非空;探针 `test/probe_autoload.gd` 保留,引擎升级后复测)。测试仍一律显式 `load()`/构造注入,不依赖单例(PLAN 02-D1,可测性设计选择)
 - `-s` 模式 `_initialize` 阶段 **root 尚未入树**(02 实测):组查询、`is_inside_tree()` 全部失效;SceneTree 脚本的树操作必须放首个 `process_frame` 之后(`run_tests.gd` 已改为首帧执行测试体)
+- godot-ai 插件为**本机 dev 工具**(非游戏系统):project.godot 的 `_mcp_game_helper` autoload 与 `[editor_plugins]` 配置随仓库提交,但 `addons/` 不入库(.gitignore 有意忽略,人裁定 2026-07-05)。**无插件的干净 checkout 首启/`--import` 会报一条插件脚本缺失 ERROR,属预期**(自装插件或编辑器里禁用即消);§5 的"日志无 ERROR"全绿标准据此豁免该条。游戏代码禁止依赖 `_mcp_game_helper`
+- 手写 `.tscn` 给 **Node 类型的 `@export`** 赋值时,节点头必须带 `node_paths=PackedStringArray("字段名")` 标记,否则 NodePath 不解析、字段**静默为 null**(03 实测,dev_playground 踩坑)
+- headless 跑场景时物理模拟按墙钟推进:`--quit-after 2000` 只保证约 10 秒出头的模拟时长,验证长流程(如敌人走完全程)需加大迭代数(03 实测 6000 次够 30+ 秒)
