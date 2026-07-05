@@ -6,20 +6,25 @@ updated: 2026-07-05
 一句话:**MVP 可玩原型** — 4 基础塔(无分支)+ 6 反应 + Gauge 制、1 张交叉口地图 10 波(含 1 种自带火附着怪)、金币单货币、状态可视化(图标 + gauge 环 + 反应飘字);验证"触发反应爽不爽、看不看得懂"。目标 2–3 周。
 
 ## Now(已承诺,按序执行)
-1. `04-towers-projectiles` — 塔场景组合(Targeting/Weapon/ProjectileSpawner)+ 弹丸命中管线
-   - **开工必读**(既有契约的消费方,全文见 project-context §3):
-     ① 命中投伤一律走 `take_damage(amount, source)`(source = 塔;反应伤害记给触发方塔),**禁止同步 `free()` 敌人**;
-     ② 附着走 `StatusComponent.apply_element`(经具名子节点发现,02-D7);
-     ③ 索敌 = `&"enemies"` 组扫描 + 距离过滤(02-D6),敌人已带 HealthComponent 护甲结算(03-D3/D4);
-     ④ **网格摆塔契约(2026-07-05 人裁定,保卫萝卜式)**:地图为网格,塔只能建在空建造格——吸附格心、一格一塔、路格/障碍格不可建;tile 尺寸为全局常量住 `res://data/`(具体值 04 PLAN 定夺,建议 64px),索敌半径等距离数值一律以 tile 为标尺表达或换算;敌人路径保持 Path2D 固定路线(沿格心画),玩家不能堵路改道。
+1. `05-status-ui` — 头顶状态图标 + gauge 环形进度条 + 反应飘字/特效占位(支柱 3 的落点)
+   - 执行手段(2026-07-05):经 godot-ai MCP 直操编辑器搭 UI + `editor_screenshot` 自查可读性,人工 gate 只验最终手感;质量目标仍是"占位但可读",正式美术等 STYLE-BIBLE。
+   - 03 遗留:innate 一次性附着、耗尽变白板的教学持续性,可视化落地后与 06 共担手感复核(03-D5)。
+   - 04 遗留:`dev_playground.gd` 的 dev 网格叠加层绘制是临时物(注释已标 dev-only),05/06 做正式建造/状态 UI 时记得删除(04 REVIEW nit)。
+   - 环境注意:重启前开启的终端/进程 PATH 仍指 Godot 4.6.3(本 session 实证),headless 验证前先 `godot --version` 自查,不对就用 4.7 全路径 `G:\Godot\Godot_v4.7-stable_win64\godot.exe`。
 
 ## Next(排队,按优先序)
-1. `05-status-ui` — 头顶状态图标 + gauge 环形进度条 + 反应飘字/特效占位(支柱 3 的落点)(执行手段 2026-07-05:经 godot-ai MCP 直操编辑器搭 UI + `editor_screenshot` 自查可读性,人工 gate 只验最终手感;质量目标仍是"占位但可读",正式美术等 STYLE-BIBLE)(03 遗留:innate 一次性附着、耗尽变白板的教学持续性,可视化落地后与 06 共担手感复核,03-D5)
-2. `06-map-waves-economy` — 交叉口地图(**网格制**:TileMap/格子搭建,路格美术占格、Path2D 沿格心画、建造格标记,消费 04 的网格摆塔契约)、10 波配置、金币经济、胜负判定(01 遗留:radius/distance/speed 等 px 数值以 tile 尺寸为标尺复核;02 遗留:ICD 期间异元素「不反应、不附着、不动 gauge」的手感待整局试玩复核,PLAN 02-D8;03 遗留:① `wave_spawner.gd` `start_wave` 对首条目 null 的手写坏数据会空引用崩溃,手写 10 波 `.tres` 时留意或顺手一行修复(03 REVIEW should-fix);② 清波判定归 06——`wave_spawn_finished` = 生成完毕非清波,若需 spawner 托管波内状态先过 /state-machine-master,03-D8)
-3. `07-balance-sim` — headless 平衡仿真 + CSV 报表 + `.tres`↔CSV 同步脚本(03 遗留:敌人量表 hp/speed/armor/gold 与 dev_wave 节奏全占位待校准;毒腐蚀 -2 在 armor 0 怪 = 同额伤害每跳 +2,e2e 已固化数据点,校准归 07/num-smith)
+1. `06-map-waves-economy` — 交叉口地图(**网格制**:TileMap/格子搭建,路格美术占格、Path2D 沿格心画、建造格标记,消费 04 的网格摆塔契约)、10 波配置、金币经济、胜负判定
+   - 01/04 遗留(距离标尺双轨):04 新数值已 tile 制(TowerDef.attack_range/projectile_speed,经 `Balance.grid.tile_size` 换算),但 03 EnemyDef.speed 与 02 反应 AoE 半径仍 px——统一复核归 06,复核前不得顺手改旧数值(04 PLAN §5)。
+   - 02 遗留:ICD 期间异元素「不反应、不附着、不动 gauge」的手感待整局试玩复核(PLAN 02-D8)。
+   - 03 遗留:① `wave_spawner.gd` `start_wave` 对首条目 null 的手写坏数据会空引用崩溃,手写 10 波 `.tres` 时留意或顺手一行修复(03 REVIEW should-fix);② 清波判定归 06——`wave_spawn_finished` = 生成完毕非清波,若需 spawner 托管波内状态先过 /state-machine-master(03-D8)。
+   - 04 遗留:① `build_grid.gd` `_ready` 自接线失败无警告,接真实地图时顺路补 `push_warning`(04 REVIEW should-fix);② `buildable.has()` O(n) 线性扫,真实地图格子多了可换 Dictionary 集合(04 REVIEW nit);③ 经济接线:cost_gold 已填占位但 04 不消费,扣费归 06;BuildGrid 无 release(无售塔),做售塔时几行扩展(04 PLAN §5);④ 弹丸不换目标(04-D7)的空弹浪费属可接受占位,整局试玩观感明显糟再记 flag(04 PLAN §5)。
+2. `07-balance-sim` — headless 平衡仿真 + CSV 报表 + `.tres`↔CSV 同步脚本
+   - 03 遗留:敌人量表 hp/speed/armor/gold 与 dev_wave 节奏全占位待校准;毒腐蚀 -2 在 armor 0 怪 = 同额伤害每跳 +2,e2e 已固化数据点,校准归 07/num-smith。
+   - 04 遗留:① 4 塔占位数值(damage 5 / 0.8s / 2.5 格 / 6 格/s / 100 金)全待校准,headless 数据点:runner 4 发点杀、lava_hound 需 20 发单座火塔射程内打不死必漏——管线正常,数值归 07(04 CHANGES §6);② Weapon 冷却按物理帧量化,60fps 下每发最多慢一帧,实际射速略低于 1/fire_interval,校准时知悉即可不必改(04 REVIEW nit)。
 
 ## Later / v2(明确延后,已留架构缝)
-- 塔 3 级二选一分支(附着型/触发型)
+- 塔 3 级二选一分支(附着型/触发型)(注:Weapon 现为纯冷却计时无 FSM,分支若引入蓄力/多段/模式切换,先过 /state-machine-master,04 PLAN §5)
+- **弹丸 `hit_direction` 零向量(技术债,低危)**:弹丸与目标重合时方向为零向量;现无消费方(03-D2 击退走路径进度回退、忽略 direction),真消费方向的效果(v2 新反应)出现时需在 `projectile.gd:60` 补零向量回退(04 REVIEW should-fix 留档)
 - 中立塔:棱镜塔、回响塔
 - 反应结晶货币 + 科技树
 - gauge 衰减、差异化附着量/消耗量(override 机制已预留)
@@ -32,6 +37,7 @@ updated: 2026-07-05
 - `01-data-layer` — 项目骨架 + defs/effects 资源类 + 11 个数据 .tres + headless 测试跑道(commit 1c7ca73,已归档 `harness/archive/01-data-layer/`)
 - `02-reaction-core` — EventBus/ReactionSystem autoload + Status/Modifier/ActiveEffects 组件 + 7 类效果运行时 + 33 个 headless 测试(commit 5b24051,已归档 `harness/archive/02-reaction-core/`)
 - `03-enemies-waves` — 通用敌人实体(路径移动/护甲/innate 附着)+ HealthComponent + WaveDef/SpawnEntry/WaveSpawner + dev 演武场,复审 APPROVE WITH NITS + 人工 playtest gate 通过(commit e240391,已归档 `harness/archive/03-enemies-waves/`)
+- `04-towers-projectiles` — 网格摆塔(GridConfig/BuildGrid,tile=64px)+ 通用塔实体(Targeting/Weapon/ProjectileSpawner)+ 追踪弹丸命中管线(先附着后投伤)+ 4 基础塔 .tres,复审 APPROVE(2 must-fix 返工核实)+ 双 playtest gate 通过,4.7 headless 20 用例 94 方法全绿(commit 12b9f50,已归档 `harness/archive/04-towers-projectiles/`)
 
 ---
 *以下为 ledger,按需查阅*
@@ -55,5 +61,7 @@ updated: 2026-07-05
   Why: 固定路径与 03 已交付的 Path2D progress 移动完全兼容(路径沿格心画即可),03 零返工;网格摆塔恰是 04 尚未动工的部分,现在定免返工;tile 尺寸落地顺带解决 01 遗留的 px 数值标尺问题。挖坑挡路型需寻路 + 03 移动重写,冲击 2–3 周 v1 周期,且堵路策略与支柱 2(深度来自反应摆位组合)不同路,若未来想要走 v2 再议。
 - 2026-07-05 — godot-ai MCP 接入后是否提升界面制作质量(人提问)— Verdict: 提升**制作与验证效率**(直操编辑器搭场景/UI + `editor_screenshot` 自查),挂 05 条目为执行手段;**不抬美术规格**——可读性质量本属 v1 验证目标,正式美术观感仍卡风格基线未定,归 Art Spec/STYLE-BIBLE,v1 维持"占位但可读"。
   Why: 工具变强 ≠ 范围变大;05 是支柱 3 落点、MCP 工具面(theme/animation/particle/ui)全覆盖的最大受益方,04/06 场景搭建顺带受益;把效率红利花在正式美术上 = 范围蠕变吃 v1 周期。
+- 2026-07-05 — 04-towers-projectiles 归档;遗留 flags 分流 — Verdict: ① 05 升 Now(dev 网格叠加层删除提醒挂 05);② 06 挂 4 条:build_grid 自接线警告、buildable O(n)、cost_gold 扣费与售塔 release、弹丸不换目标观感,并把距离标尺双轨复核(01 遗留)更新为 04 tile 制 vs 03/02 px 的具体对账;③ 07 挂 2 条:4 塔占位数值 + headless 数据点(runner 4 发 / lava_hound 20 发)、Weapon 冷却帧量化知悉;④ hit_direction 零向量无 v1 消费方 → Later 技术债留档;Weapon 无 FSM 的触发条件挂 Later 塔分支条目。变更集 commit 12b9f50 经人授权由 Producer 代执行(沿 02/03 先例)。
+  Why: 全部遗留均非阻塞(复审 APPROVE、双 gate 已过、4.7 全绿),按"就近落地"分流到各自然消费方;零向量债现无实害且消费方在 v2,升 Later 而非挂 06 免噪音。另:本 session shell 实证重启前进程仍持 4.6.3 PATH,操作提醒挂 05 条目。
 - 2026-07-05 — 03-enemies-waves 归档;复审遗留 1 条 should-fix + 3 条 nits 分流 — Verdict: ① `wave_spawner.start_wave` 首条目 null 无防御 → 挂 06(手写 10 波 `.tres` 时留意或顺手修);② innate 教学持续性手感 → 挂 05/06 复核;③ 敌人量表与毒腐蚀数据点校准 → 挂 07;④ 3 条 nits(.gitignore 末行换行、innate cfg 缺失静默白板、02 归档日期微差)不单开工作项,随手可校。
   Why: 均不影响 headless 全绿与 03 验收面(playtest gate 已过);沿 02 归档先例按"就近落地"分流,04 为既有契约的纯消费方,无新增账。变更集 commit 经人授权由 Producer 代执行(feat e240391)。

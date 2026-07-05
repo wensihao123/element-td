@@ -44,7 +44,7 @@ updated: 2026-07-05
 > 「下一步」写「功能完成 → Producer 归档 + 记 Shipped」。归档动作由 Producer 做。
 
 ## 下一步
-**功能完成 → Producer 归档 + 记 Shipped**(所有必需阶段——计划、实现、审查——全 `[x]`,复审 verdict APPROVE,满足功能完成判据)。开 `/role-producer`:整目录挪 `harness/archive/`、BACKLOG 记 Shipped、触发「未决 flags」中挂 05/06/07 事项的登记。
+**已归档**(2026-07-05,Producer):变更集 commit 12b9f50,目录挪入 `harness/archive/`,BACKLOG 记 Shipped,「未决 flags」已分流登记至 BACKLOG 的 05/06/07/Later 条目。本文件仅作历史追溯。
 
 ## 决策记录(账本·按需读)
 - 2026-07-05 设计/勘探/美术/接线四个可选阶段裁定不走(来源:PLAN §4,Planner)。
