@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://c6lta5vksski4" path="res://scenes/maps/dev_playground.gd" id="1_dev"]
 [ext_resource type="Script" uid="uid://llho8crx25v6" path="res://scripts/systems/wave_spawner.gd" id="2_spawner"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/enemy.tscn" id="3_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/towers/tower.tscn" id="4_tower"]
+[ext_resource type="Script" path="res://scripts/systems/build_grid.gd" id="5_grid"]
 
 [sub_resource type="Curve2D" id="curve_s"]
 _data = {
@@ -23,3 +25,9 @@ path = NodePath("../Path2D")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1591925869]
 position = Vector2(576, 324)
+
+[node name="PresetFireTower" parent="." instance=ExtResource("4_tower")]
+position = Vector2(96, 96)
+
+[node name="BuildGrid" type="Node" parent="."]
+script = ExtResource("5_grid")

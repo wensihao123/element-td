@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scenes/towers/tower.gd" id="1_tower"]
+[ext_resource type="Script" path="res://scripts/components/targeting.gd" id="2_targeting"]
+[ext_resource type="Script" path="res://scripts/components/weapon.gd" id="3_weapon"]
+[ext_resource type="Script" path="res://scripts/components/projectile_spawner.gd" id="4_spawner"]
+[ext_resource type="PackedScene" path="res://scenes/towers/projectile.tscn" id="5_projectile"]
+
+[node name="Tower" type="Node2D"]
+script = ExtResource("1_tower")
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
+
+[node name="Targeting" type="Node" parent="."]
+script = ExtResource("2_targeting")
+
+[node name="Weapon" type="Node" parent="."]
+script = ExtResource("3_weapon")
+
+[node name="ProjectileSpawner" type="Node" parent="."]
+script = ExtResource("4_spawner")
+projectile_scene = ExtResource("5_projectile")

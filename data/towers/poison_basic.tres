@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TowerDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/defs/tower_def.gd" id="1_def"]
+[ext_resource type="Resource" path="res://data/elements/poison.tres" id="2_poison"]
+
+[resource]
+script = ExtResource("1_def")
+id = &"poison_basic"
+display_name = "毒塔"
+element = ExtResource("2_poison")
+damage = 5.0
+fire_interval = 0.8
+attack_range = 2.5
+projectile_speed = 6.0
+cost_gold = 100
+attach_override = -1.0

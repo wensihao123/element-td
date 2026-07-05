@@ -125,6 +125,47 @@ func test_dev_wave_integrity() -> void:
 				"dev_wave 每条目的 enemy 引用不得为空")
 
 
+const TOWER_PATHS: Array[String] = [
+	"res://data/towers/fire_basic.tres",
+	"res://data/towers/ice_basic.tres",
+	"res://data/towers/lightning_basic.tres",
+	"res://data/towers/poison_basic.tres",
+]
+const GRID_CONFIG_PATH: String = "res://data/balance/grid_config.tres"
+
+
+func test_grid_config_matches_mvp_baseline() -> void:
+	var cfg: GridConfig = load(GRID_CONFIG_PATH) as GridConfig
+	assert_true(cfg != null, "grid_config.tres 应能加载为 GridConfig")
+	if cfg == null:
+		return
+	assert_eq(cfg.tile_size, 64.0, "tile_size 应为 04-D1 基准 64px")
+
+
+func test_tower_defs_integrity() -> void:
+	var ids: Array[StringName] = []
+	var element_ids: Array[StringName] = []
+	for path: String in TOWER_PATHS:
+		var def: TowerDef = load(path) as TowerDef
+		assert_true(def != null, "%s 应能加载为 TowerDef" % path)
+		if def == null:
+			continue
+		assert_true(def.id != &"", "%s 的 id 不得为空" % path)
+		assert_true(not ids.has(def.id), "塔 id 重复:%s" % def.id)
+		ids.append(def.id)
+		assert_true(def.element != null, "%s 的 element 引用不得为空" % path)
+		if def.element != null:
+			assert_true(not element_ids.has(def.element.id),
+					"塔 element 重复:%s" % def.element.id)
+			element_ids.append(def.element.id)
+		assert_true(def.damage > 0.0, "%s 的 damage 应 > 0" % path)
+		assert_true(def.fire_interval > 0.0, "%s 的 fire_interval 应 > 0" % path)
+		assert_true(def.attack_range > 0.0, "%s 的 attack_range 应 > 0(tile 单位)" % path)
+		assert_true(def.projectile_speed > 0.0, "%s 的 projectile_speed 应 > 0(tile/s)" % path)
+		assert_true(def.cost_gold > 0, "%s 的 cost_gold 应 > 0(04 占位,06 消费)" % path)
+	assert_eq(ids.size(), 4, "应恰好 4 座基础塔")
+
+
 func test_balance_autoload_registered() -> void:
 	assert_true(ProjectSettings.has_setting("autoload/Balance"),
 			"project.godot 应注册 Balance autoload")
