@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scenes/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/ui/status_display.tscn" id="6_display"]
 [ext_resource type="Script" path="res://scripts/components/status_component.gd" id="2_status"]
 [ext_resource type="Script" path="res://scripts/components/modifier_stack.gd" id="3_stack"]
 [ext_resource type="Script" path="res://scripts/components/active_effects.gd" id="4_active"]
@@ -23,3 +24,6 @@ script = ExtResource("5_health")
 
 [node name="Visual" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[node name="StatusDisplay" parent="." instance=ExtResource("6_display")]
+position = Vector2(0, -20)

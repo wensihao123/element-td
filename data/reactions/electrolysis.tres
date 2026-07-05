@@ -13,6 +13,7 @@ duration = 1.0
 [resource]
 script = ExtResource("1_def")
 id = &"electrolysis"
+color = Color(0.62, 0.25, 0.9, 1)
 display_name = "电解"
 element_a = ExtResource("2_lightning")
 element_b = ExtResource("3_poison")

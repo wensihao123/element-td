@@ -23,6 +23,7 @@ radius = 96.0
 [resource]
 script = ExtResource("1_def")
 id = &"superconduct"
+color = Color(0.7, 0.62, 1, 1)
 display_name = "超导"
 element_a = ExtResource("2_ice")
 element_b = ExtResource("3_lightning")

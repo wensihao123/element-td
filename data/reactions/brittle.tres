@@ -16,6 +16,7 @@ duration = 5.0
 [resource]
 script = ExtResource("1_def")
 id = &"brittle"
+color = Color(0.3, 0.9, 0.75, 1)
 display_name = "脆化"
 element_a = ExtResource("2_ice")
 element_b = ExtResource("3_poison")

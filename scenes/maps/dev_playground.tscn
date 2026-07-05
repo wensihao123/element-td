@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/enemy.tscn" id="3_enemy"]
 [ext_resource type="PackedScene" path="res://scenes/towers/tower.tscn" id="4_tower"]
 [ext_resource type="Script" path="res://scripts/systems/build_grid.gd" id="5_grid"]
+[ext_resource type="PackedScene" path="res://scenes/ui/reaction_vfx_layer.tscn" id="6_vfx"]
 
 [sub_resource type="Curve2D" id="curve_s"]
 _data = {
@@ -31,3 +32,5 @@ position = Vector2(96, 96)
 
 [node name="BuildGrid" type="Node" parent="."]
 script = ExtResource("5_grid")
+
+[node name="ReactionVfxLayer" parent="." instance=ExtResource("6_vfx")]

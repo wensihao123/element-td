@@ -14,6 +14,7 @@ radius = 96.0
 [resource]
 script = ExtResource("1_def")
 id = &"steam_burst"
+color = Color(0.9, 0.93, 0.95, 1)
 display_name = "蒸汽爆破"
 element_a = ExtResource("2_fire")
 element_b = ExtResource("3_ice")
