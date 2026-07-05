@@ -6,19 +6,15 @@ updated: 2026-07-05
 一句话:**MVP 可玩原型** — 4 基础塔(无分支)+ 6 反应 + Gauge 制、1 张交叉口地图 10 波(含 1 种自带火附着怪)、金币单货币、状态可视化(图标 + gauge 环 + 反应飘字);验证"触发反应爽不爽、看不看得懂"。目标 2–3 周。
 
 ## Now(已承诺,按序执行)
-1. `05-status-ui` — 头顶状态图标 + gauge 环形进度条 + 反应飘字/特效占位(支柱 3 的落点)
-   - 执行手段(2026-07-05):经 godot-ai MCP 直操编辑器搭 UI + `editor_screenshot` 自查可读性,人工 gate 只验最终手感;质量目标仍是"占位但可读",正式美术等 STYLE-BIBLE。
-   - 03 遗留:innate 一次性附着、耗尽变白板的教学持续性,可视化落地后与 06 共担手感复核(03-D5)。
-   - 04 遗留:`dev_playground.gd` 的 dev 网格叠加层绘制是临时物(注释已标 dev-only),05/06 做正式建造/状态 UI 时记得删除(04 REVIEW nit)。
-   - 环境注意:重启前开启的终端/进程 PATH 仍指 Godot 4.6.3(本 session 实证),headless 验证前先 `godot --version` 自查,不对就用 4.7 全路径 `G:\Godot\Godot_v4.7-stable_win64\godot.exe`。
-
-## Next(排队,按优先序)
 1. `06-map-waves-economy` — 交叉口地图(**网格制**:TileMap/格子搭建,路格美术占格、Path2D 沿格心画、建造格标记,消费 04 的网格摆塔契约)、10 波配置、金币经济、胜负判定
    - 01/04 遗留(距离标尺双轨):04 新数值已 tile 制(TowerDef.attack_range/projectile_speed,经 `Balance.grid.tile_size` 换算),但 03 EnemyDef.speed 与 02 反应 AoE 半径仍 px——统一复核归 06,复核前不得顺手改旧数值(04 PLAN §5)。
    - 02 遗留:ICD 期间异元素「不反应、不附着、不动 gauge」的手感待整局试玩复核(PLAN 02-D8)。
-   - 03 遗留:① `wave_spawner.gd` `start_wave` 对首条目 null 的手写坏数据会空引用崩溃,手写 10 波 `.tres` 时留意或顺手一行修复(03 REVIEW should-fix);② 清波判定归 06——`wave_spawn_finished` = 生成完毕非清波,若需 spawner 托管波内状态先过 /state-machine-master(03-D8)。
-   - 04 遗留:① `build_grid.gd` `_ready` 自接线失败无警告,接真实地图时顺路补 `push_warning`(04 REVIEW should-fix);② `buildable.has()` O(n) 线性扫,真实地图格子多了可换 Dictionary 集合(04 REVIEW nit);③ 经济接线:cost_gold 已填占位但 04 不消费,扣费归 06;BuildGrid 无 release(无售塔),做售塔时几行扩展(04 PLAN §5);④ 弹丸不换目标(04-D7)的空弹浪费属可接受占位,整局试玩观感明显糟再记 flag(04 PLAN §5)。
-2. `07-balance-sim` — headless 平衡仿真 + CSV 报表 + `.tres`↔CSV 同步脚本
+   - 03 遗留:① `wave_spawner.gd` `start_wave` 对首条目 null 的手写坏数据会空引用崩溃,手写 10 波 `.tres` 时留意或顺手一行修复(03 REVIEW should-fix);② 清波判定归 06——`wave_spawn_finished` = 生成完毕非清波,若需 spawner 托管波内状态先过 /state-machine-master(03-D8);③ innate 一次性附着、耗尽变白板的教学持续性——05 已落地可视化并 gate 记录手感观察,处置(是否加持续提示/重附着)归 06 整局试玩复核(03-D5 / 05 承接)。
+   - 04 遗留:① `dev_playground.gd` 的 dev 网格叠加层绘制是临时物(注释已标 dev-only),06 做正式建造/地图 UI 时删除——05 未碰建造交互,现单归 06(04 REVIEW nit / 05 裁定收窄);② `build_grid.gd` `_ready` 自接线失败无警告,接真实地图时顺路补 `push_warning`(04 REVIEW should-fix);③ `buildable.has()` O(n) 线性扫,真实地图格子多了可换 Dictionary 集合(04 REVIEW nit);④ 经济接线:cost_gold 已填占位但 04 不消费,扣费归 06;BuildGrid 无 release(无售塔),做售塔时几行扩展(04 PLAN §5);⑤ 弹丸不换目标(04-D7)的空弹浪费属可接受占位,整局试玩观感明显糟再记 flag(04 PLAN §5)。
+   - 05 遗留(REVIEW should-fix):反应飘字上浮改 local `position.y`、扩散环锚 `global_position`,依赖「`ReactionVfxLayer` 保持默认变换(原点/无缩放)」隐式契约——06 正式地图接线时把该约束**显式写进 INTEGRATION-STEPS**(挂载时校验层 transform,或把上浮也改为不吃父变换),别让它只活在 05 CHANGES §5(05 REVIEW)。
+
+## Next(排队,按优先序)
+1. `07-balance-sim` — headless 平衡仿真 + CSV 报表 + `.tres`↔CSV 同步脚本
    - 03 遗留:敌人量表 hp/speed/armor/gold 与 dev_wave 节奏全占位待校准;毒腐蚀 -2 在 armor 0 怪 = 同额伤害每跳 +2,e2e 已固化数据点,校准归 07/num-smith。
    - 04 遗留:① 4 塔占位数值(damage 5 / 0.8s / 2.5 格 / 6 格/s / 100 金)全待校准,headless 数据点:runner 4 发点杀、lava_hound 需 20 发单座火塔射程内打不死必漏——管线正常,数值归 07(04 CHANGES §6);② Weapon 冷却按物理帧量化,60fps 下每发最多慢一帧,实际射速略低于 1/fire_interval,校准时知悉即可不必改(04 REVIEW nit)。
 
@@ -28,7 +24,8 @@ updated: 2026-07-05
 - 中立塔:棱镜塔、回响塔
 - 反应结晶货币 + 科技树
 - gauge 衰减、差异化附着量/消耗量(override 机制已预留)
-- **导出闸门(技术债,首次导出 PCK 前必修)**:`reaction_system.gd` 的 DirAccess 扫描在导出包内落空(`.tres` 变 `.tres.remap`)→ 导出版反应表静默为空;修法 = 剥 `.remap` 后缀或改显式清单,几行改动(02 REVIEW should-fix)。v1 验证全程编辑器/本机跑,不导出不触雷。
+- **导出闸门(技术债,首次导出 PCK 前必修)**:两账同筐,均只在导出时触雷、v1 不导出不触雷——① `reaction_system.gd` 的 DirAccess 扫描在导出包内落空(`.tres` 变 `.tres.remap`)→ 导出版反应表静默为空,修法 = 剥 `.remap` 后缀或改显式清单(02 REVIEW should-fix);② 反应飘字中文字形靠系统字体回退,导出 PCK 后可能豆腐块,需内嵌中文字体或改英文/图标(05 PLAN §5)。
+- **godot-ai MCP 游戏侧 helper 握手失败(dev 工具债,低危)**:`project_run` 的游戏侧 `_mcp_game_helper` 握手恒失败(helper_live 一直 false),运行时截图自查降级为 headless 探针 + 人工 F6(05 CHANGES §6)。不阻塞任何交付(纯 dev 工具、游戏代码禁依赖),有空排查 addons 游戏侧组件即可。
 - 复合敌人:元素免疫/吸收、净化者、元素护盾 Boss
 - 战役 15 关结构、解题式关卡、无尽模式
 - 美术风格基线与正式资产(MVP 用占位)
@@ -38,6 +35,7 @@ updated: 2026-07-05
 - `02-reaction-core` — EventBus/ReactionSystem autoload + Status/Modifier/ActiveEffects 组件 + 7 类效果运行时 + 33 个 headless 测试(commit 5b24051,已归档 `harness/archive/02-reaction-core/`)
 - `03-enemies-waves` — 通用敌人实体(路径移动/护甲/innate 附着)+ HealthComponent + WaveDef/SpawnEntry/WaveSpawner + dev 演武场,复审 APPROVE WITH NITS + 人工 playtest gate 通过(commit e240391,已归档 `harness/archive/03-enemies-waves/`)
 - `04-towers-projectiles` — 网格摆塔(GridConfig/BuildGrid,tile=64px)+ 通用塔实体(Targeting/Weapon/ProjectileSpawner)+ 追踪弹丸命中管线(先附着后投伤)+ 4 基础塔 .tres,复审 APPROVE(2 must-fix 返工核实)+ 双 playtest gate 通过,4.7 headless 20 用例 94 方法全绿(commit 12b9f50,已归档 `harness/archive/04-towers-projectiles/`)
+- `05-status-ui` — 状态可视化:头顶图标(首字占位/贴图零码升级)+ gauge 环(draw_arc 自绘)+ 反应飘字/扩散环占位;两条互不依赖路线(实体自身视图轮询 / 地图级层订阅 EventBus),逻辑代码零改动(D7 铁则),复审 APPROVE WITH NITS + 双 playtest gate F6 目验 PASS,4.7 headless 22 用例 0 失败(已归档 `harness/archive/05-status-ui/`,commit 待记)
 
 ---
 *以下为 ledger,按需查阅*
@@ -46,6 +44,8 @@ updated: 2026-07-05
 (暂无)
 
 ## Decision log
+- 2026-07-05 — 05-status-ui 归档;遗留 flags 分流 — Verdict: ① 06 升 Now、07 升 Next 第 1;② 06 挂账:innate 教学持续性处置(承 03/05,可视化已落地待整局手感裁定)、dev 网格叠加层删除**收窄为仅 06**(05 未碰建造交互)、05 REVIEW should-fix 飘字/环依赖「层默认变换」隐式契约 → 06 接线显式写进 INTEGRATION-STEPS;③ Later:中文字形豆腐块**并入既有导出闸门**(同为不导出不触雷)、godot-ai MCP 游戏侧 helper 握手失败新增为 dev 工具债;④ 05 两条 nit(隐藏态陈旧字段、`_process` 无条件轮询)复审判无害留档、不入 BACKLOG。变更集(05 游戏码 + 归档)commit 待人授权后由 Producer 代执行(沿 02/03/04 先例)。
+  Why: 05 复审 APPROVE WITH NITS、must-fix 空、双 F6 gate 通过、22 用例全绿,纯增量表现层零逻辑改动,直接归档无争议;所有遗留均非阻塞,沿 02/03/04 归档先例按「就近落地」分流到自然消费方(06 为地图/建造/接线正主,故收纳表现契约与建造工具删除;中文字形与导出闸门同为导出期问题合并免筐外增项;MCP 握手属 dev 工具非游戏范围,单列低危债不污染游戏 backlog)。
 - 2026-07-04 — harness 初始化 — Verdict: 以《元素反应塔防-项目说明.md》为设计与架构基准,MVP 第 5 节直接定为 v1 范围线;实现顺序采用项目说明第 5 节建议顺序切成 7 个 feature。
   Why: 项目说明已完成 Game Designer 层面的工作,无需重复设计;按依赖序(数据层 → 核心逻辑 → 实体 → 表现 → 关卡 → 工具)排队,每个 feature 可独立验收。
 - 2026-07-04 — 是否先跑 /arch-guard 建 ARCHITECTURE.md — Verdict: 暂缓(Later 未列,属流程决定)。
